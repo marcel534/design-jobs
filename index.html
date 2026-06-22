@@ -627,93 +627,29 @@ document.querySelectorAll('li[data-id]').forEach(function(li){
 
 <script>
 (function(){
-  var hideDone=true;
-  var KEY='removedJobs';
-  function getRem(){try{return JSON.parse(localStorage.getItem(KEY))||[]}catch(e){return[]}}
-  function saveRem(a){localStorage.setItem(KEY,JSON.stringify(a))}
-  
-  // Restore removed
-  var rem=getRem();
-  document.querySelectorAll('li[data-id]').forEach(function(li){
-    if(rem.indexOf(li.dataset.id)>-1)li.style.display='none';
-    var btn=li.querySelector('.jremove');
-    if(!btn)return;
-    btn.addEventListener('click',function(e){
-      e.preventDefault();e.stopPropagation();
-      var a=getRem(),id=li.dataset.id;
-      if(a.indexOf(id)<0)a.push(id);
-      saveRem(a);li.style.display='none';
+  var state={country:'all',wt:'all'};
+  try{var s=JSON.parse(localStorage.getItem('filterState'));if(s)state=s;}catch(e){}
+  function apply(){
+    var c=state.country,w=state.wt;
+    document.querySelectorAll('[data-f="country"]').forEach(function(el){el.classList.toggle('on',el.dataset.v===c);});
+    document.querySelectorAll('[data-f="wt"]').forEach(function(el){el.classList.toggle('on',el.dataset.v===w);});
+    ['main-list','ostrava-list'].forEach(function(id){
+      var ul=document.getElementById(id);
+      if(!ul)return;
+      ul.querySelectorAll('li[data-id]').forEach(function(li){
+        var lc=li.dataset.country||'',lw=li.dataset.wt||'';
+        var ok=(c==='all'||lc===c)&&(w==='all'||lw===w);
+        li.style.display=ok?'':'none';
+      });
     });
-  });
-
-  // Checkbox
-  document.addEventListener('change',function(e){
-    if(e.target.type!=='checkbox')return;
-    var li=e.target.closest('li[data-id]');
-    if(!li)return;
-    li.classList.toggle('done',e.target.checked);
-    document.getElementById('stat-applied').textContent=
-      document.querySelectorAll('#main-list .chk input:checked').length;
-  });
-
-  // Toggle done visibility
-  var toggleBtn=document.getElementById('toggleDone');
-  if(toggleBtn)toggleBtn.addEventListener('click',function(){
-    hideDone=!hideDone;
-    document.body.classList.toggle('hideDone',hideDone);
-    this.classList.toggle('active',!hideDone);
-    this.textContent=hideDone?'✓ Beworben':'✓ Zeigen';
-  });
-
-  // Reset
-  var resetBtn=document.getElementById('resetBtn');
-  if(resetBtn)resetBtn.addEventListener('click',function(){
-    if(!confirm('Alle Markierungen und ausgeblendete Einträge zurücksetzen?'))return;
-    document.querySelectorAll('li[data-id]').forEach(function(li){
-      li.style.display='';li.classList.remove('done');
-      var cb=li.querySelector('input');if(cb)cb.checked=false;
-    });
-    localStorage.removeItem('removedJobs');
-    document.getElementById('stat-applied').textContent='0';
-    applyFilters();
-  });
-
-  // Search
-  var q='';
-  var searchEl=document.getElementById('jSearch');
-  if(searchEl)searchEl.addEventListener('input',function(){q=this.value.toLowerCase();applyFilters()});
-
-  // Filter chips
-  var activeC='all',activeW='all';
-  document.querySelectorAll('.fchip').forEach(function(btn){
-    btn.addEventListener('click',function(){
-      var f=this.dataset.f,v=this.dataset.v;
-      document.querySelectorAll('.fchip[data-f="'+f+'"]').forEach(function(b){b.classList.remove('on')});
-      this.classList.add('on');
-      if(f==='country')activeC=v;else activeW=v;
-      applyFilters();
-    });
-  });
-
-  function applyFilters(){
-    var items=document.querySelectorAll('#main-list li[data-id]');
-    var shown=0;
-    items.forEach(function(li){
-      if(li.style.display==='none')return;
-      var mc=activeC==='all'||li.dataset.country===activeC;
-      var mw=activeW==='all'||li.dataset.wt===activeW;
-      var ms=!q||(li.querySelector('.jtitle')?.textContent.toLowerCase().includes(q))||
-               (li.querySelector('.jco')?.textContent.toLowerCase().includes(q))||
-               (li.querySelector('.jloc')?.textContent.toLowerCase().includes(q));
-      var vis=mc&&mw&&ms;
-      li.dataset.hidden=vis?'0':'1';
-      if(vis)shown++;
-    });
-    var hint=document.getElementById('result-hint');
-    if(hint){
-      hint.innerHTML='Zeigt <b>'+shown+'</b> von <b>'+items.length+'</b> Stellen';
-    }
+    var oSec=document.getElementById('ostrava-section');
+    if(oSec)oSec.style.display=(c==='all'||c==='CZ')?'':'none';
+    try{localStorage.setItem('filterState',JSON.stringify(state));}catch(e){}
   }
+  document.querySelectorAll('[data-f]').forEach(function(chip){
+    chip.addEventListener('click',function(){state[chip.dataset.f]=chip.dataset.v;apply();});
+  });
+  apply();
 })();
 </script>
 <div id="claude-agent-glow-border" style="position: fixed; inset: 0px; pointer-events: none; z-index: 2147483646; opacity: 1; transition: opacity 0.3s ease-in-out;"><div id="claude-agent-glow-border-inner" style="position: absolute; inset: 0px; will-change: opacity; box-shadow: rgba(217, 119, 87, 0.7) 0px 0px 15px inset, rgba(217, 119, 87, 0.5) 0px 0px 25px inset, rgba(217, 119, 87, 0.2) 0px 0px 35px inset;"></div></div><div id="claude-phantom-cursor" aria-hidden="true" style="position: fixed; top: 0px; left: 0px; pointer-events: none; z-index: 2147483646; transform: translate3d(1134px, 422px, 0px); transition: transform 180ms cubic-bezier(0.2, 0, 0, 1); will-change: transform;"><svg id="claude-phantom-cursor-plain" width="20" height="26" viewBox="0 0 20 26" style="position: absolute; top: 0px; left: 0px; overflow: visible;"><path d="M0 0 L0 18 L4.5 14 L7.5 21.5 L11 20 L8 13 L14 13 Z" stroke="white" stroke-width="3" stroke-linejoin="round" fill="white"></path><path d="M0 0 L0 18 L4.5 14 L7.5 21.5 L11 20 L8 13 L14 13 Z" fill="#111"></path></svg><svg id="claude-phantom-cursor-styled" width="20" height="26" viewBox="0 0 20 26" style="position: absolute; top: 0px; left: 0px; overflow: visible; filter: drop-shadow(rgba(217, 119, 87, 0.9) 0px 0px 4px) drop-shadow(rgba(217, 119, 87, 0.45) 0px 0px 10px);"><path d="M0 0 L0 18 L4.5 14 L7.5 21.5 L11 20 L8 13 L14 13 Z" stroke="#D97757" stroke-width="3" stroke-linejoin="round" fill="#D97757"></path><path d="M0 0 L0 18 L4.5 14 L7.5 21.5 L11 20 L8 13 L14 13 Z" fill="#FAF9F5"></path></svg></div></body></html>
