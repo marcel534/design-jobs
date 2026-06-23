@@ -1,5 +1,8 @@
 <html lang="de"><head>
-<meta charset="utf-8">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+  <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Design Jobs · Täglich aktualisiert</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -816,12 +819,7 @@ footer a{color:var(--text3);text-decoration:underline}
 
 <!--MANUAL-REMOVE-START-->
 <script>
-(function(){var KEY='removedJobs';function get(){try{return JSON.parse(localStorage.getItem(KEY))||[]}catch(e){return[]}}function save(a){localStorage.setItem(KEY,JSON.stringify(a))}
-var rem=get();
-document.querySelectorAll('li[data-id]').forEach(function(li){
-  if(rem.indexOf(li.getAttribute('data-id'))>-1)li.style.display='none';
-});
-})();
+(function(){var KEY='removedJobs';function get(){try{return JSON.parse(localStorage.getItem(KEY))||[]}catch(e){return[]}}function save(a){localStorage.setItem(KEY,JSON.stringify(a))}function bar(){var n=get().length,b=document.getElementById('rmbar');if(!b){b=document.createElement('div');b.id='rmbar';b.style.cssText='margin:10px auto;max-width:900px;padding:6px 14px;font:13px/1.5 system-ui;color:#888;display:none;align-items:center;gap:10px';var h=document.querySelector('header');h?h.insertAdjacentElement('afterend',b):document.body.prepend(b)}if(n){b.style.display='flex';b.innerHTML='🗑️ <b>'+n+'</b> Stellen manuell entfernt <button id="rmundo" style="cursor:pointer;border:1px solid #ccc;background:transparent;color:inherit;border-radius:6px;padding:2px 10px;font:inherit">Alle wiederherstellen</button>';document.getElementById('rmundo').onclick=function(){save([]);document.querySelectorAll('li[data-id]').forEach(function(li){li.style.display=''});bar()}}else{b.style.display='none';b.innerHTML=''}}function wire(btn,li){if(btn&&!btn.dataset.w){btn.dataset.w='1';btn.addEventListener('click',function(e){e.preventDefault();e.stopPropagation();var a=get(),id=li.getAttribute('data-id');if(a.indexOf(id)<0)a.push(id);save(a);li.style.display='none';bar()})}}var rem=get();document.querySelectorAll('li[data-id]').forEach(function(li){if(rem.indexOf(li.getAttribute('data-id'))>-1)li.style.display='none';var ej=li.querySelector('.jremove');wire(ej,li);if(li.querySelector('.rmx')||ej)return;li.style.position='relative';li.style.paddingRight='30px';var x=document.createElement('button');x.className='rmx';x.type='button';x.title='Eintrag von der Liste entfernen';x.textContent='✕';x.style.cssText='position:absolute;right:4px;top:50%;transform:translateY(-50%);background:none;border:none;color:#999;cursor:pointer;font-size:14px;padding:4px 8px;line-height:1';x.onmouseenter=function(){x.style.color='#e5484d'};x.onmouseleave=function(){x.style.color='#999'};wire(x,li);li.appendChild(x)});bar()})();
 </script>
 <!--MANUAL-REMOVE-END-->
 
